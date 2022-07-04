@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-
+use App\Memo;
 class HomeController extends Controller
 {
     /**
@@ -23,12 +23,49 @@ class HomeController extends Controller
      */
     public function index()
     {
-        return view('home');
+        // ログインしているユーザー情報をViewに渡す
+        $user = \Auth::user();
+        // メモ一覧を取得
+        // ASC=昇順、DESC=降順
+        $memos = Memo::where('user_id', $user['id'])->where('status', 1)->orderBy('updated_at', 'DESC')->get();
+        // dd($memos);
+        return view('home', compact('user', 'memos'));
     }
 
     public function create()
     {
+        // ログインしているユーザー情報をViewに渡す
         $user = \Auth::user();
         return view('create', compact('user'));
+    }
+
+    public function store(Request $request)
+    {
+        $data = $request->all();
+        // dd: dump die ⇐ 項目をそれぞれ確認できる（処理が止まる）デバッグ用
+        // dd($data);
+        // POSTされたデータをDB（memosテーブル）に挿入
+        // MEMOモデルにDBへ保存する命令を出す
+        $memo_id = Memo::insertGetId([
+            'content' => $data['content'],
+            'user_id' => $data['user_id'],
+            'status' => 1
+        ]);
+
+        // リダイレクト処理
+        return redirect()->route('home');
+    }
+
+    public function edit($id)
+    {
+        // 該当するIDのメモをデータベースから取得
+        $user = \Auth::user();
+        $memo = Memo::where('status', 1)->where('id', $id)->where('user_id', $user['id'])
+            ->first();
+        // dd($memo);
+        $memos = Memo::where('user_id', $user['id'])->where('status', 1)->orderBy('updated_at', 'DESC')->get();
+        //取得したメモをViewに渡す
+        // $tags = Tag::where('user_id', $user['id'])->get();
+        return view('edit', compact('memo', 'user', 'memos'));
     }
 }

@@ -21,5 +21,7 @@ Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
 
-// Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/home', 'HomeController@index')->name('home');
 Route::get('/create', 'HomeController@create')->name('create');
+Route::post('/store', 'HomeController@store')->name('store');
+Route::get('/edit/{id}', 'HomeController@edit')->name('edit');
