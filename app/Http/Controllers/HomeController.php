@@ -66,6 +66,7 @@ class HomeController extends Controller
     public function edit($id)
     {
         // 該当するIDのメモをデータベースから取得
+        $user = \Auth::user();
         $memo = Memo::where('status', 1)->where('id', $id)->where('user_id', $user['id'])
             ->first();
         // dd($memo);

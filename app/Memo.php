@@ -14,10 +14,13 @@ class Memo extends Model
         }else{
             // もしタグの指定があればタグで絞る ->where(tagがクエリパラメーターで取得したものに一致)
             $memos = $this::select('memos.*')
-                ->leftJoin('memo_tags', 'memo_id', '=', 'memos.id')
-                ->leftJoin('tags', 'tags.id', '=', 'memo_tags.tag_id')
-                ->where('tags.name', $tag)->where('tags.user_id', $user_id)
-                ->where('memos.user_id', $user_id)->where('status', 1)->get();
+                // ->leftJoin('memo_tags', 'memo_id', '=', 'memos.id')
+                ->leftJoin('tags', 'tags.id', '=', 'memos.tag_id')
+                ->where('tags.name', $tag)
+                ->where('tags.user_id', $user_id)
+                ->where('memos.user_id', $user_id)
+                ->where('status', 1)
+                ->get();
             return $memos;
         }
     }
